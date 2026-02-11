@@ -31,16 +31,21 @@ async def self_start(update: Update, context: ContextTypes.DEFAULT_TYPE):
         return
     context.user_data["awaiting_contact"] = True
     await update.message.reply_text(
-        "Ласкаво просимо. Для активації спочатку поділіться контактом (натисніть кнопку нижче):",
+        "Ласкаво просимо. Для активації спочатку обовʼязково поділіться контактом (натисніть кнопку нижче):",
         reply_markup=request_contact_keyboard(),
     )
 
 
 async def key_input(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    # Ключ приймаємо після контакту (awaiting_key) або одразу, якщо користувач ввів ключ без контакту (напр. на десктопі)
+    # Ключ приймаємо лише після контакту (awaiting_key). Без контакту — нагадуємо поділитися.
     awaiting_key = context.user_data.get("awaiting_key")
     awaiting_contact = context.user_data.get("awaiting_contact")
     if not awaiting_key and not awaiting_contact:
+        return
+    if awaiting_contact and not awaiting_key:
+        await update.message.reply_text(
+            "Спочатку поділіться контактом (натисніть кнопку «Поділитися контактом»). Після цього введіть ключ активації."
+        )
         return
     key_text = (update.message.text or "").strip()
     if not key_text:
@@ -48,10 +53,7 @@ async def key_input(update: Update, context: ContextTypes.DEFAULT_TYPE):
         return
     key_row = await get_key_by_text(key_text)
     if not key_row:
-        if awaiting_contact:
-            await update.message.reply_text("Невірний ключ. Або поділіться контактом кнопкою нижче, а потім введіть ключ.")
-        else:
-            await update.message.reply_text("Невірний ключ.")
+        await update.message.reply_text("Невірний ключ.")
         return
     if key_row["used"] == 1:
         await update.message.reply_text("Цей ключ вже використано.")
