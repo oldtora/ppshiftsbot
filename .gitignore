@@ -1,0 +1,31 @@
+# Секрети та локальна конфігурація (на Ubuntu створити свій .env з .env.example)
+.env
+.env.local
+*.env.local
+
+# Віртуальне середовище (на Ubuntu: python3 -m venv venv && pip install -r requirements.txt)
+venv/
+.venv/
+env/
+
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.egg-info/
+.eggs/
+.pytest_cache/
+.mypy_cache/
+
+# Дані та БД (на Ubuntu папку data/ створити вручну, ключі згенерувати скриптом)
+data/
+*.db
+*.sqlite
+*.log
+
+# IDE / OS (опційно)
+.idea/
+.vscode/
+.cursor/
+*.swp
+Thumbs.db
